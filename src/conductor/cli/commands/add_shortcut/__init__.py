@@ -177,7 +177,7 @@ def modify_user_config_vdf(
 
     shortcuts_vdf = VdfFile(shortcuts_vdf_path, binary=True, create_if_not_exists=True)
 
-    signed_app_id = generate_shortcut_vdf_app_id(f'{app_name}{expanded_exe_path}')
+    signed_app_id = generate_shortcut_vdf_app_id(f'{app_name}{os.path.basename(expanded_exe_path)}')
     unsigned_app_id = str(int(signed_app_id) + 2**32)
 
     print_cyan('Summary of shortcut to add:')
