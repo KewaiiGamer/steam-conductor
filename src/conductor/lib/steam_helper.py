@@ -19,6 +19,9 @@ def find_steam_user_id() -> str | None:
 
 
 def find_image_by_name(image_name: str, directory: str) -> str | None:
+    if not os.path.exists(directory):
+        return None
+
     image_extensions = ['.jpg', '.jpeg', '.png', '.ico']
 
     for file in os.listdir(directory):

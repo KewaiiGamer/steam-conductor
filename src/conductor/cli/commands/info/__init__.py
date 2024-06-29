@@ -1,6 +1,6 @@
 import os
 from conductor.lib.command import BaseCommand
-from conductor.lib.constants import STEAM_USERDATA_PATH
+from conductor.lib.constants import STEAM_USERDATA_PATH, STEAM_CONFIG_VDF_PATH
 from conductor.lib.steam_helper import find_steam_user_id
 from conductor.lib.vdf_file import VdfFile
 
@@ -21,4 +21,8 @@ class Command(BaseCommand):
         shortcuts_vdf = VdfFile(shortcuts_vdf_path, binary=True, create_if_not_exists=True)
         print('Shortcuts added to steam:')
         print(shortcuts_vdf.pretty_print())
+        print('-------------------------')
+        print('VDF Config:')
+        config_vdf = VdfFile(STEAM_CONFIG_VDF_PATH).data
+        print(config_vdf)
         return 0

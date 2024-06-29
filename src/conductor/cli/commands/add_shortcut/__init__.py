@@ -13,6 +13,8 @@ from conductor.lib.constants import STEAM_USERDATA_PATH, \
 
 __tuple__ = namedtuple('tuple', 'app_id, error_code')
 
+from vdf import VDFDict
+
 
 class Command(BaseCommand):
     def __init__(self):
@@ -260,16 +262,33 @@ def set_compat_tool(app_id: str, compat_tool: str | None, dry_run: bool = False)
 
     print_cyan(f'Setting compat tool to {compat_tool}')
     config_vdf = VdfFile(STEAM_CONFIG_VDF_PATH)
+    # config_vdf['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
 
-    if 'CompatToolMapping' not in config_vdf.data:
-        config_vdf.data['CompatToolMapping'] = {}
+    config_dict = config_vdf.data
+    properties = ['InstallConfigStore', 'Software', 'Valve', 'Steam', 'CompatToolMapping']
+    prop_explored = []
 
-    if app_id in config_vdf.data['CompatToolMapping']:
-        config_vdf.data['CompatToolMapping'].remove_all_for(app_id)
+    for prop in properties:
+        prop_explored.append(prop)
+        if prop not in config_dict:
+            print_red(f'no such property as {'.'.join(prop_explored)}')
+            print_red('cannot set compatibility tool')
+            return 0
+        config_dict = config_dict[prop]
 
-    config_vdf.data['CompatToolMapping'][app_id] = {
-        'name': compat_tool
-    }
+    print_green('Original CompatToolMapping: ' +
+                str(config_vdf.data['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']))
+
+    if app_id in config_dict:
+        config_dict.remove_all_for(app_id)
+
+    config_dict[app_id] = VDFDict()
+    config_dict[app_id]['name'] = compat_tool
+    config_dict[app_id]['config'] = ''
+    config_dict[app_id]['priority'] = '250'
+
+    print_green('Modified CompatToolMapping: ' +
+                str(config_vdf.data['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']))
 
     if not dry_run:
         config_vdf.save()
