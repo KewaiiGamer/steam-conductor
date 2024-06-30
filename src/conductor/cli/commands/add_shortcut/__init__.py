@@ -190,7 +190,7 @@ def modify_user_config_vdf(
     print(f'launch options: {launch_options}')
 
     if 'shortcuts' not in shortcuts_vdf.data:
-        shortcuts_vdf.data['shortcuts'] = {}
+        shortcuts_vdf.data['shortcuts'] = VDFDict()
 
     print_blue('Original shortcuts_vdf: ' + str(shortcuts_vdf.data))
 
@@ -262,7 +262,6 @@ def set_compat_tool(app_id: str, compat_tool: str | None, dry_run: bool = False)
 
     print_cyan(f'Setting compat tool to {compat_tool}')
     config_vdf = VdfFile(STEAM_CONFIG_VDF_PATH)
-    # config_vdf['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
 
     config_dict = config_vdf.data
     properties = ['InstallConfigStore', 'Software', 'Valve', 'Steam', 'CompatToolMapping']

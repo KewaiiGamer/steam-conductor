@@ -21,8 +21,4 @@ class Command(BaseCommand):
         shortcuts_vdf = VdfFile(shortcuts_vdf_path, binary=True, create_if_not_exists=True)
         print('Shortcuts added to steam:')
         print(shortcuts_vdf.pretty_print())
-        print('-------------------------')
-        print('VDF Config:')
-        config_vdf = VdfFile(STEAM_CONFIG_VDF_PATH).data
-        print(config_vdf)
         return 0
