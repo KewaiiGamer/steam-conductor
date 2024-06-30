@@ -218,7 +218,7 @@ def modify_user_config_vdf(
 
     index = str(number_index)
     if index not in shortcuts_vdf.data['shortcuts']:
-        shortcuts_vdf.data['shortcuts'][index] = {}
+        shortcuts_vdf.data['shortcuts'][index] = VDFDict()
 
     shortcuts_vdf.data['shortcuts'][index]['appid'] = signed_app_id
     shortcuts_vdf.data['shortcuts'][index]['AppName'] = app_name
@@ -236,7 +236,7 @@ def modify_user_config_vdf(
     shortcuts_vdf.data['shortcuts'][index]['DevKitOverrideAppID'] = ''
     shortcuts_vdf.data['shortcuts'][index]['LastPlayTime'] = 0
     shortcuts_vdf.data['shortcuts'][index]['FlatpakAppId'] = ''
-    shortcuts_vdf.data['shortcuts'][index]['tags'] = {}
+    shortcuts_vdf.data['shortcuts'][index]['tags'] = VDFDict()
 
     print_cyan('Modified shortcuts_vdf.data ' + str(shortcuts_vdf.data))
 
