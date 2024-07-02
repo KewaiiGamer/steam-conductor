@@ -7,9 +7,9 @@ if [[ ! -d ./src ]]; then
   exit 1
 fi
 
-if [[ ! -d ./venv ]]; then
+if [[ ! -d ./.venv ]]; then
   echo "initializing virtual environment"
-  python -m venv venv
+  python -m venv .venv
   source venv/bin/activate
 fi
 
