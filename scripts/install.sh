@@ -10,7 +10,7 @@ fi
 if [[ ! -d ./.venv ]]; then
   echo "initializing virtual environment"
   python -m venv .venv
-  source venv/bin/activate
+  source .venv/bin/activate
 fi
 
 pip3 install -e .
