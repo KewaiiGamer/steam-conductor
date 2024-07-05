@@ -248,9 +248,9 @@ class Command(BaseCommand):
                     try:
                         subprocess.run([script_to_execute], check=True)
                     except subprocess.CalledProcessError as e:
-                        print_red(f'Error executing post install script {script_to_execute}: {e}')
+                        print_red(f'Error executing {protocol} script {script_to_execute}: {e}')
                         return err.ERROR_EXECUTING_INSTALL_SCRIPT
-                print_green(f'Executed post install script {script_to_execute}')
+                print_green(f'Executed {protocol} script {script_to_execute}')
                 if dry_run:
-                    print_yellow(f'Dry run, did not execute post install script {script_to_execute}')
+                    print_yellow(f'Dry run, did not execute {protocol} script {script_to_execute}')
         return 0

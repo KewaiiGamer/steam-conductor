@@ -160,6 +160,7 @@ def add_non_steam_game(
         logo=logo,
         tenfoot=tenfoot,
         boxart=boxart,
+        icon=icon,
         dry_run=dry_run)
     if result != 0:
         return result
@@ -220,11 +221,13 @@ def modify_user_config_vdf(
     if index not in shortcuts_vdf.data['shortcuts']:
         shortcuts_vdf.data['shortcuts'][index] = VDFDict()
 
+    local_icon = os.path.join(get_grid_dir(user_id), f'{unsigned_app_id}_icon.ico') if icon is not None else ''
+
     shortcuts_vdf.data['shortcuts'][index]['appid'] = signed_app_id
     shortcuts_vdf.data['shortcuts'][index]['AppName'] = app_name
     shortcuts_vdf.data['shortcuts'][index]['Exe'] = expanded_exe_path
     shortcuts_vdf.data['shortcuts'][index]['StartDir'] = f'"{os.path.dirname(expanded_exe_path)}"'
-    shortcuts_vdf.data['shortcuts'][index]['icon'] = '' if icon is None else icon
+    shortcuts_vdf.data['shortcuts'][index]['icon'] = local_icon
     shortcuts_vdf.data['shortcuts'][index]['ShortcutPath'] = ''
     shortcuts_vdf.data['shortcuts'][index]['LaunchOptions'] = launch_options if launch_options is not None else ''
     shortcuts_vdf.data['shortcuts'][index]['IsHidden'] = 0
@@ -304,9 +307,10 @@ def set_art_work(
         logo: str | None,
         tenfoot: str | None,
         boxart: str | None,
+        icon: str | None,
         dry_run: bool = False,
         ) -> int:
-    grid_dir = os.path.expanduser(os.path.join(STEAM_USERDATA_PATH, user_id, 'config', 'grid'))
+    grid_dir = get_grid_dir(user_id)
     os.makedirs(grid_dir, exist_ok=True)
     success = True
     if hero is not None and not os.path.exists(hero):
@@ -321,6 +325,10 @@ def set_art_work(
     if boxart is not None and not os.path.exists(boxart):
         print_red(f'Boxart image {boxart} does not exist')
         success = False
+    if icon is not None and not os.path.exists(icon):
+        print_red(f'Icon {icon} does not exist')
+        success = False
+
     if not success:
         return err.ERROR_ART_NOT_PROPERLY_SET
 
@@ -328,8 +336,13 @@ def set_art_work(
     copy_artwork('logo', grid_dir, logo, f'{app_id}_logo', dry_run=dry_run)
     copy_artwork('tenfoot', grid_dir, tenfoot, f'{app_id}', dry_run=dry_run)
     copy_artwork('boxart', grid_dir, boxart, f'{app_id}p', dry_run=dry_run)
+    copy_artwork('icon', grid_dir, icon, f'{app_id}_icon', dry_run=dry_run)
 
     return 0
+
+
+def get_grid_dir(user_id: str) -> str:
+    return os.path.expanduser(os.path.join(STEAM_USERDATA_PATH, user_id, 'config', 'grid'))
 
 
 def copy_artwork(label: str, grid_dir: str, src: str | None, dest_name: str, dry_run: bool = False) -> None:
