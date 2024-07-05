@@ -122,6 +122,13 @@ class Command(BaseCommand):
                 },
                 'required': ['appName', 'exePath']
             },
+            'pre-install': {
+                'type': 'array',
+                'items': {
+                    'type': 'string',
+                    'format': 'file-exists'
+                }
+            },
             'post-install': {
                 'type': 'array',
                 'items': {
@@ -204,9 +211,13 @@ class Command(BaseCommand):
                 return err.ERROR_INSTALLING_FILES
 
     @staticmethod
-    def execute_post_install(manifest: dict, directory: str, dry_run: bool) -> int:
-        if 'post-install' in manifest:
-            for script in manifest['post-install']:
+    def execute_post_install(manifest: dict, directory: str, dry_run: bool, post_install: bool = False, pre_install: bool = False) -> int:
+        if post_install == pre_install:
+            print_yellow("pre_install and post_install cannot be the same value")
+            return 0
+        protocol = 'post-install' if post_install else 'pre-install'
+        if protocol in manifest:
+            for script in manifest[protocol]:
                 script_to_execute = os.path.join(directory, script)
                 if not os.path.exists(script_to_execute):
                     print_red(f'Script {script_to_execute} does not exist')
