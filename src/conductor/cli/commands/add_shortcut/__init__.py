@@ -199,7 +199,8 @@ def modify_user_config_vdf(
     app_ids_found = []
 
     for shortcuts in shortcuts_vdf.data.get_all_for('shortcuts'):
-        for index in shortcuts.iterkeys():
+        indices = list(shortcuts.iterkeys())
+        for index in indices:
             shortcut = shortcuts[index]
             indices_found.append(index)
             if 'appid' in shortcut:

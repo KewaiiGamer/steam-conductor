@@ -169,7 +169,8 @@ def get_app_ids(
     app_ids_found = {}
 
     for shortcuts in shortcuts_vdf.data.get_all_for('shortcuts'):
-        for index in shortcuts.iterkeys():
+        indices = list(shortcuts.iterkeys())
+        for index in indices:
             shortcut = shortcuts[index]
             if 'appid' in shortcut:
                 app_ids_found[str(shortcut['appid'])] = index
@@ -233,7 +234,7 @@ def update_indices(dry_run: bool):
 
     for shortcuts in shortcuts_vdf.data.get_all_for('shortcuts'):
         cache_shortcuts = []
-        indices = shortcuts.iterkeys()
+        indices = list(shortcuts.iterkeys())
         for index in indices:
             cache_shortcuts.append(shortcuts[index])
             del shortcuts[index]
@@ -241,8 +242,6 @@ def update_indices(dry_run: bool):
         for cached_shortcut in cache_shortcuts:
             shortcuts[str(real_index)] = cached_shortcut
             real_index += 1
-
-    print_cyan('modified shortcuts_vdf.data ' + str(shortcuts_vdf.data))
 
     if not dry_run:
         shortcuts_vdf.save()
