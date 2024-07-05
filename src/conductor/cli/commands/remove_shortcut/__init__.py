@@ -52,12 +52,12 @@ class Command(BaseCommand):
         if args.dry_run:
             print_yellow('dry run, not actually modifying steam')
         if args.app_id is not None:
-            return remove_non_steam_game_by_app_id(
+            result = remove_non_steam_game_by_app_id(
                 app_id=args.app_id,
                 dry_run=args.dry_run
             )
         elif args.app_name is not None and args.exe_path is not None:
-            return remove_non_steam_game(
+            result = remove_non_steam_game(
                 app_name=args.app_name,
                 exe_path=args.exe_path,
                 dry_run=args.dry_run
@@ -65,6 +65,12 @@ class Command(BaseCommand):
         else:
             print_red('Either the app-id or both app-name and exe-path are required')
             return err.ERROR_MISSING_REQUIRED_ARGUMENTS
+
+        if result != 0:
+            return result
+
+        update_indices(dry_run=args.dry_run)
+        return 0
 
 
 def remove_non_steam_game_by_app_id(
@@ -207,3 +213,27 @@ def find_and_remove_shortcut(
     remove_art_work(user_id, unsigned_app_id, dry_run=dry_run)
 
     return 0
+
+
+def update_indices(dry_run: bool):
+    user_id = find_steam_user_id()
+
+    shortcuts_vdf_path = os.path.expanduser(os.path.join(STEAM_USERDATA_PATH, user_id, 'config', 'shortcuts.vdf'))
+
+    shortcuts_vdf = VdfFile(shortcuts_vdf_path, binary=True, create_if_not_exists=True)
+
+    print_blue(f'updating {shortcuts_vdf} so shortcuts are in sequential order')
+
+    if not dry_run:
+        for shortcuts in shortcuts_vdf.data.get_all_for('shortcuts'):
+            cache_shortcuts = []
+            indices = shortcuts.iterkeys()
+            for index in indices:
+                cache_shortcuts.append(shortcuts[index])
+                del shortcuts[index]
+            real_index = 0
+            for cached_shortcut in cache_shortcuts:
+                shortcuts[real_index] = cached_shortcut
+                real_index += 1
+
+    print_cyan('modified shortcuts_vdf.data ' + str(shortcuts_vdf.data))

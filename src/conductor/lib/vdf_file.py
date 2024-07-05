@@ -3,6 +3,8 @@ import vdf
 import json
 from pathlib import Path
 
+from conductor.cli.console_colors import print_blue
+
 
 class VdfFile:
     def __init__(self, vdf_path: str, binary=False, create_if_not_exists=False):
@@ -49,7 +51,7 @@ class VdfFile:
                         del entry['appid']
                         # convert to unsigned app id, what the user expects
                         entry['appid'] = dup_appid + 2**32
-            print('original', self.data)
+            print_blue('original ' + str(self.data))
             # because VDFDict is a subclass of dict, we can use the json module to pretty print it
             return json.dumps(duplicate, indent=json_indent, sort_keys=True)
         else:
