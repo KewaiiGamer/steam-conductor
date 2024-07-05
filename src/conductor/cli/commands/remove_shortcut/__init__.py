@@ -138,7 +138,14 @@ def remove_art_work(
         print_yellow(f'grid directory {grid_dir} does not exist, nothing to remove')
         return
 
-    images_to_remove = [f'{unsigned_app_id}_hero', f'{unsigned_app_id}_logo', unsigned_app_id, f'{unsigned_app_id}p']
+    images_to_remove = [
+        f'{unsigned_app_id}_hero',
+        f'{unsigned_app_id}_logo',
+        unsigned_app_id,
+        f'{unsigned_app_id}p',
+        f'{unsigned_app_id}_icon',
+    ]
+
     for image in images_to_remove:
         image_to_remove = find_image_by_name(image, grid_dir)
         if image_to_remove is not None:

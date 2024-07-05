@@ -221,7 +221,11 @@ def modify_user_config_vdf(
     if index not in shortcuts_vdf.data['shortcuts']:
         shortcuts_vdf.data['shortcuts'][index] = VDFDict()
 
-    local_icon = os.path.join(get_grid_dir(user_id), f'{unsigned_app_id}_icon.ico') if icon is not None else ''
+    if icon is not None:
+        grid_dir = get_grid_dir(user_id)
+        local_icon = os.path.join(grid_dir, f'{unsigned_app_id}_icon.{os.path.splitext(icon)[1]}')
+    else:
+        local_icon = ''
 
     shortcuts_vdf.data['shortcuts'][index]['appid'] = signed_app_id
     shortcuts_vdf.data['shortcuts'][index]['AppName'] = app_name
