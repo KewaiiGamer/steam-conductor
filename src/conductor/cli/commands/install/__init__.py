@@ -57,6 +57,15 @@ class Command(BaseCommand):
         if manifest is None:
             return err.MANIFEST_LOAD_ERROR
 
+        result = self.execute_install_scripts(
+            manifest=manifest,
+            directory=f'{conductor_directory}/scripts',
+            dry_run=args.dry_run,
+            post_install=False,
+            pre_install=True)
+        if result != 0:
+            return result
+
         result = self.install(manifest, expanded_directory, args.dry_run)
         if result != 0:
             return result
@@ -75,7 +84,12 @@ class Command(BaseCommand):
         ) == 0:
             return err.ERROR_ADDING_SHORTCUT
 
-        return self.execute_post_install(manifest, f'{conductor_directory}/scripts', args.dry_run)
+        return self.execute_install_scripts(
+            manifest=manifest,
+            directory=f'{conductor_directory}/scripts',
+            dry_run=args.dry_run,
+            post_install=True,
+            pre_install=False)
 
     schema = {
         'type': 'object',
@@ -211,7 +225,12 @@ class Command(BaseCommand):
                 return err.ERROR_INSTALLING_FILES
 
     @staticmethod
-    def execute_post_install(manifest: dict, directory: str, dry_run: bool, post_install: bool = False, pre_install: bool = False) -> int:
+    def execute_install_scripts(
+            manifest: dict,
+            directory: str,
+            dry_run: bool,
+            post_install: bool,
+            pre_install: bool) -> int:
         if post_install == pre_install:
             print_yellow("pre_install and post_install cannot be the same value")
             return 0
@@ -221,16 +240,16 @@ class Command(BaseCommand):
                 script_to_execute = os.path.join(directory, script)
                 if not os.path.exists(script_to_execute):
                     print_red(f'Script {script_to_execute} does not exist')
-                    return err.POST_INSTALL_SCRIPT_NOT_FOUND
+                    return err.INSTALL_SCRIPT_NOT_FOUND
                 if not os.access(script_to_execute, os.X_OK):
                     print_red(f'Script {script_to_execute} is not executable')
-                    return err.POST_INSTALL_SCRIPT_NOT_EXECUTABLE
+                    return err.INSTALL_SCRIPT_NOT_EXECUTABLE
                 if not dry_run:
                     try:
                         subprocess.run([script_to_execute], check=True)
                     except subprocess.CalledProcessError as e:
                         print_red(f'Error executing post install script {script_to_execute}: {e}')
-                        return err.ERROR_EXECUTING_POST_INSTALL_SCRIPT
+                        return err.ERROR_EXECUTING_INSTALL_SCRIPT
                 print_green(f'Executed post install script {script_to_execute}')
                 if dry_run:
                     print_yellow(f'Dry run, did not execute post install script {script_to_execute}')
