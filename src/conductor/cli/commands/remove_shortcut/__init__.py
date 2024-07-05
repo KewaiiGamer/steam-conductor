@@ -222,18 +222,22 @@ def update_indices(dry_run: bool):
 
     shortcuts_vdf = VdfFile(shortcuts_vdf_path, binary=True, create_if_not_exists=True)
 
-    print_blue(f'updating {shortcuts_vdf} so shortcuts are in sequential order')
+    print_blue(f'updating {shortcuts_vdf_path} so shortcuts are in sequential order')
 
-    if not dry_run:
-        for shortcuts in shortcuts_vdf.data.get_all_for('shortcuts'):
-            cache_shortcuts = []
-            indices = shortcuts.iterkeys()
-            for index in indices:
-                cache_shortcuts.append(shortcuts[index])
-                del shortcuts[index]
-            real_index = 0
-            for cached_shortcut in cache_shortcuts:
-                shortcuts[real_index] = cached_shortcut
-                real_index += 1
+    for shortcuts in shortcuts_vdf.data.get_all_for('shortcuts'):
+        cache_shortcuts = []
+        indices = shortcuts.iterkeys()
+        for index in indices:
+            cache_shortcuts.append(shortcuts[index])
+            del shortcuts[index]
+        real_index = 0
+        for cached_shortcut in cache_shortcuts:
+            shortcuts[str(real_index)] = cached_shortcut
+            real_index += 1
 
     print_cyan('modified shortcuts_vdf.data ' + str(shortcuts_vdf.data))
+
+    if not dry_run:
+        shortcuts_vdf.save()
+    else:
+        print_yellow('dry run, not modifying shortcuts.vdf')
