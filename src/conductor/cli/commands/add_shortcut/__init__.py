@@ -264,9 +264,10 @@ def set_compat_tool(app_id: str, compat_tool: str | None, dry_run: bool = False)
 
     compat_tool_path = os.path.expanduser(os.path.join(STEAM_COMPAT_TOOLS_PATH, compat_tool))
 
-    if not os.path.exists(compat_tool_path):
-        print_red(f'Compat tool {compat_tool} does not exist')
-        return err.ERROR_COMPAT_TOOL_DOES_NOT_EXIST
+    # Do not scan this folder since proton version bundled with steam do not exist here
+    #if not os.path.exists(compat_tool_path):
+        #print_red(f'Compat tool {compat_tool} does not exist')
+        #return err.ERROR_COMPAT_TOOL_DOES_NOT_EXIST
 
     print_cyan(f'Setting compat tool to {compat_tool}')
     config_vdf = VdfFile(STEAM_CONFIG_VDF_PATH)
