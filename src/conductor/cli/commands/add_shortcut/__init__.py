@@ -230,7 +230,7 @@ def modify_user_config_vdf(
 
     shortcuts_vdf.data['shortcuts'][index]['appid'] = signed_app_id
     shortcuts_vdf.data['shortcuts'][index]['AppName'] = app_name
-    shortcuts_vdf.data['shortcuts'][index]['Exe'] = '"' + expanded_exe_path + '"'
+    shortcuts_vdf.data['shortcuts'][index]['Exe'] = f'"{expanded_exe_path}"'
     shortcuts_vdf.data['shortcuts'][index]['StartDir'] = f'"{os.path.dirname(expanded_exe_path)}"'
     shortcuts_vdf.data['shortcuts'][index]['icon'] = local_icon
     shortcuts_vdf.data['shortcuts'][index]['ShortcutPath'] = ''
